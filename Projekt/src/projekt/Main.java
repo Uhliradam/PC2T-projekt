@@ -2,22 +2,94 @@ package projekt;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
 
-    // seznam zaměstnanců (dynamická struktura)
+    // dynamický seznam zaměstnanců
     static List<Zamestnanec> zamestnanci = new ArrayList<>();
 
-    // proměnná pro automatické ID
+    // automatické generování ID
     static int nextId = 1;
+
+    // Scanner pro načítání z klávesnice
+    static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
 
-        // vytvoření zaměstnanců a přidání do seznamu
-        zamestnanci.add(new Zamestnanec(nextId++, "Jan", "Novak", 1990));
-        zamestnanci.add(new Zamestnanec(nextId++, "Petr", "Svoboda", 1985));
+        boolean konec = false;
 
-        // výpis všech zaměstnanců
+        // hlavní smyčka programu
+        while (!konec) {
+
+            vypisMenu();
+
+            int volba = sc.nextInt();
+            sc.nextLine(); // vyčištění ENTERU
+
+            switch (volba) {
+
+                case 1:
+                    pridejZamestnance();
+                    break;
+
+                case 2:
+                    vypisZamestnance();
+                    break;
+
+                case 0:
+                    konec = true;
+                    break;
+
+                default:
+                    System.out.println("Neplatná volba");
+            }
+        }
+
+        System.out.println("Program ukončen.");
+    }
+
+    // metoda pro výpis menu
+    static void vypisMenu() {
+        System.out.println("\n--- MENU ---");
+        System.out.println("1 - Přidat zaměstnance");
+        System.out.println("2 - Vypsat zaměstnance");
+        System.out.println("0 - Konec");
+        System.out.print("Volba: ");
+    }
+
+    // metoda pro přidání zaměstnance
+    static void pridejZamestnance() {
+
+        System.out.print("Zadej jméno: ");
+        String jmeno = sc.nextLine();
+
+        System.out.print("Zadej příjmení: ");
+        String prijmeni = sc.nextLine();
+
+        System.out.print("Zadej rok narození: ");
+        int rok = sc.nextInt();
+        sc.nextLine();
+
+        // vytvoření objektu
+        Zamestnanec z = new Zamestnanec(nextId++, jmeno, prijmeni, rok);
+
+        // přidání do seznamu
+        zamestnanci.add(z);
+
+        System.out.println("Zaměstnanec přidán.");
+    }
+
+    // metoda pro výpis zaměstnanců
+    static void vypisZamestnance() {
+
+        // kontrola jestli není prázdný seznam
+        if (zamestnanci.isEmpty()) {
+            System.out.println("Žádní zaměstnanci.");
+            return;
+        }
+
+        // výpis všech
         for (Zamestnanec z : zamestnanci) {
             System.out.println(z);
         }
