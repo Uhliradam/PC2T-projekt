@@ -1,22 +1,22 @@
 package projekt;
 
-public class Zamestnanec {
+public abstract class Zamestnanec {
 
-    // atributy (vlastnosti zaměstnance)
-    private int id;              // unikátní ID zaměstnance
-    private String jmeno;        // křestní jméno
-    private String prijmeni;     // příjmení
-    private int rokNarozeni;     // rok narození
+    // atributy zaměstnance (private = zapouzdření)
+    private int id;
+    private String jmeno;
+    private String prijmeni;
+    private int rokNarozeni;
 
-    // konstruktor - používá se při vytvoření objektu
+    // konstruktor
     public Zamestnanec(int id, String jmeno, String prijmeni, int rokNarozeni) {
-        this.id = id;                    // this = aktuální objekt
+        this.id = id;
         this.jmeno = jmeno;
         this.prijmeni = prijmeni;
         this.rokNarozeni = rokNarozeni;
     }
 
-    // gettery - slouží pro získání hodnot (zapouzdření)
+    // gettery - přístup k private atributům
     public int getId() {
         return id;
     }
@@ -33,7 +33,10 @@ public class Zamestnanec {
         return rokNarozeni;
     }
 
-    // přepis metody toString -> jak se objekt vypíše
+    // abstraktní metoda - každá skupina implementuje jinak
+    public abstract void provedDovednost();
+
+    // výpis zaměstnance
     @Override
     public String toString() {
         return id + ": " + jmeno + " " + prijmeni + " (" + rokNarozeni + ")";

@@ -55,12 +55,21 @@ public class Main {
         System.out.println("1 - Přidat zaměstnance");
         System.out.println("2 - Vypsat zaměstnance");
         System.out.println("0 - Konec");
-        System.out.print("Volba: ");
+        System.out.println("Volba: ");
     }
 
     // metoda pro přidání zaměstnance
     static void pridejZamestnance() {
 
+        // výběr skupiny
+    	System.out.println("Vyber skupinu:");
+        System.out.println("1 - Datový analytik");
+        System.out.println("2 - Bezpečnostní specialista");
+
+        int typ = sc.nextInt();
+        sc.nextLine(); // vyčištění bufferu
+
+        // načtení údajů
         System.out.print("Zadej jméno: ");
         String jmeno = sc.nextLine();
 
@@ -71,8 +80,14 @@ public class Main {
         int rok = sc.nextInt();
         sc.nextLine();
 
-        // vytvoření objektu
-        Zamestnanec z = new Zamestnanec(nextId++, jmeno, prijmeni, rok);
+        Zamestnanec z;
+
+        // vytvoření podle typu
+        if (typ == 1) {
+            z = new DatovyAnalytik(nextId++, jmeno, prijmeni, rok);
+        } else {
+            z = new BezpecnostniSpecialista(nextId++, jmeno, prijmeni, rok);
+        }
 
         // přidání do seznamu
         zamestnanci.add(z);
