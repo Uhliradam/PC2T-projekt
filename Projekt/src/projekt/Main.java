@@ -40,6 +40,14 @@ public class Main {
                 case 3:
                     pridejSpolupraci();
                     break;
+                
+                case 4:
+                    vypisSpolupracovniky();
+                    break;
+                    
+                case 5:
+                    odeberZamestnance();
+                    break;
 
                 case 0:
                     konec = true;
@@ -59,6 +67,8 @@ public class Main {
         System.out.println("1 - Přidat zaměstnance");
         System.out.println("2 - Vypsat zaměstnance");
         System.out.println("3 - Přidat spolupráci");
+        System.out.println("4 - Vypsat spolupracovníky");
+        System.out.println("5 - Odebrat zaměstnance");
         System.out.println("0 - Konec");
         System.out.print("Volba: ");
     }
@@ -164,5 +174,69 @@ public class Main {
         }
 
         return null;
+    }
+    
+    static void vypisSpolupracovniky() {
+
+        System.out.print("Zadej ID zaměstnance: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        Zamestnanec z = najdiZamestnance(id);
+
+        // kontrola existence
+        if (z == null) {
+            System.out.println("Zaměstnanec nenalezen");
+            return;
+        }
+
+        // kontrola prázdného seznamu
+        if (z.getSpolupracovnici().isEmpty()) {
+            System.out.println("Nemá žádné spolupracovníky");
+            return;
+        }
+
+        System.out.println("Spolupracovníci:");
+
+        for (Spoluprace s : z.getSpolupracovnici()) {
+
+            Zamestnanec kolega = s.getKolega();
+            UrovenSpoluprace uroven = s.getUroven();
+
+            System.out.println(
+                    kolega.getId() + " "
+                    + kolega.getJmeno() + " "
+                    + kolega.getPrijmeni()
+                    + " - " + uroven
+            );
+        }
+    }
+    
+    static void odeberZamestnance() {
+
+        System.out.print("Zadej ID zaměstnance k odebrání: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        Zamestnanec z = najdiZamestnance(id);
+
+        if (z == null) {
+            System.out.println("Zaměstnanec nenalezen");
+            return;
+        }
+
+        // odstranění vazeb u ostatních zaměstnanců
+        for (Zamestnanec ostatni : zamestnanci) {
+
+            // removeIf = smaže podle podmínky
+            ostatni.getSpolupracovnici().removeIf(
+                    s -> s.getKolega().getId() == id
+            );
+        }
+
+        // odstranění ze seznamu
+        zamestnanci.remove(z);
+
+        System.out.println("Zaměstnanec odebrán.");
     }
 }
