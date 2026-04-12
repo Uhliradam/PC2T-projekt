@@ -12,7 +12,7 @@ public class Main {
     // automatické generování ID
     static int nextId = 1;
 
-    // Scanner pro načítání z klávesnice
+    // scanner pro vstup z klávesnice
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -25,7 +25,7 @@ public class Main {
             vypisMenu();
 
             int volba = sc.nextInt();
-            sc.nextLine(); // vyčištění ENTERU
+            sc.nextLine(); // vyčištění bufferu
 
             switch (volba) {
 
@@ -35,6 +35,10 @@ public class Main {
 
                 case 2:
                     vypisZamestnance();
+                    break;
+
+                case 3:
+                    pridejSpolupraci();
                     break;
 
                 case 0:
@@ -49,27 +53,26 @@ public class Main {
         System.out.println("Program ukončen.");
     }
 
-    // metoda pro výpis menu
+    // výpis menu
     static void vypisMenu() {
         System.out.println("\n--- MENU ---");
         System.out.println("1 - Přidat zaměstnance");
         System.out.println("2 - Vypsat zaměstnance");
+        System.out.println("3 - Přidat spolupráci");
         System.out.println("0 - Konec");
-        System.out.println("Volba: ");
+        System.out.print("Volba: ");
     }
 
-    // metoda pro přidání zaměstnance
+    // přidání zaměstnance
     static void pridejZamestnance() {
 
-        // výběr skupiny
-    	System.out.println("Vyber skupinu:");
+        System.out.println("Vyber skupinu:");
         System.out.println("1 - Datový analytik");
         System.out.println("2 - Bezpečnostní specialista");
 
         int typ = sc.nextInt();
-        sc.nextLine(); // vyčištění bufferu
+        sc.nextLine();
 
-        // načtení údajů
         System.out.print("Zadej jméno: ");
         String jmeno = sc.nextLine();
 
@@ -89,24 +92,77 @@ public class Main {
             z = new BezpecnostniSpecialista(nextId++, jmeno, prijmeni, rok);
         }
 
-        // přidání do seznamu
         zamestnanci.add(z);
 
         System.out.println("Zaměstnanec přidán.");
     }
 
-    // metoda pro výpis zaměstnanců
+    // výpis zaměstnanců
     static void vypisZamestnance() {
 
-        // kontrola jestli není prázdný seznam
         if (zamestnanci.isEmpty()) {
             System.out.println("Žádní zaměstnanci.");
             return;
         }
 
-        // výpis všech
         for (Zamestnanec z : zamestnanci) {
             System.out.println(z);
         }
+    }
+
+    // přidání spolupráce
+    static void pridejSpolupraci() {
+
+        System.out.print("Zadej ID zaměstnance: ");
+        int id1 = sc.nextInt();
+
+        System.out.print("Zadej ID kolegy: ");
+        int id2 = sc.nextInt();
+
+        System.out.println("Úroveň spolupráce:");
+        System.out.println("1 - Špatná");
+        System.out.println("2 - Průměrná");
+        System.out.println("3 - Dobrá");
+
+        int volba = sc.nextInt();
+        sc.nextLine();
+
+        Zamestnanec z1 = najdiZamestnance(id1);
+        Zamestnanec z2 = najdiZamestnance(id2);
+
+        if (z1 == null || z2 == null) {
+            System.out.println("Zaměstnanec nenalezen");
+            return;
+        }
+
+        UrovenSpoluprace uroven;
+
+        switch (volba) {
+            case 1:
+                uroven = UrovenSpoluprace.SPATNA;
+                break;
+            case 2:
+                uroven = UrovenSpoluprace.PRUMERNA;
+                break;
+            default:
+                uroven = UrovenSpoluprace.DOBRA;
+        }
+
+        // přidání spolupráce
+        z1.pridejSpolupraci(z2, uroven);
+
+        System.out.println("Spolupráce přidána");
+    }
+
+    // hledání zaměstnance podle ID
+    static Zamestnanec najdiZamestnance(int id) {
+
+        for (Zamestnanec z : zamestnanci) {
+            if (z.getId() == id) {
+                return z;
+            }
+        }
+
+        return null;
     }
 }

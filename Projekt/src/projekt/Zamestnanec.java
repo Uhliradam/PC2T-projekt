@@ -1,14 +1,18 @@
 package projekt;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Zamestnanec {
 
-    // atributy zaměstnance (private = zapouzdření)
     private int id;
     private String jmeno;
     private String prijmeni;
     private int rokNarozeni;
 
-    // konstruktor
+    // seznam spolupracovníků
+    private List<Spoluprace> spolupracovnici = new ArrayList<>();
+
     public Zamestnanec(int id, String jmeno, String prijmeni, int rokNarozeni) {
         this.id = id;
         this.jmeno = jmeno;
@@ -16,7 +20,15 @@ public abstract class Zamestnanec {
         this.rokNarozeni = rokNarozeni;
     }
 
-    // gettery - přístup k private atributům
+    // přidání spolupráce
+    public void pridejSpolupraci(Zamestnanec kolega, UrovenSpoluprace uroven) {
+        spolupracovnici.add(new Spoluprace(kolega, uroven));
+    }
+
+    public List<Spoluprace> getSpolupracovnici() {
+        return spolupracovnici;
+    }
+
     public int getId() {
         return id;
     }
@@ -33,10 +45,8 @@ public abstract class Zamestnanec {
         return rokNarozeni;
     }
 
-    // abstraktní metoda - každá skupina implementuje jinak
     public abstract void provedDovednost();
 
-    // výpis zaměstnance
     @Override
     public String toString() {
         return id + ": " + jmeno + " " + prijmeni + " (" + rokNarozeni + ")";
