@@ -56,6 +56,10 @@ public class Main {
                 case 7:
                     spustDovednost();
                     break;
+                    
+                case 8:
+                    abecedniVypis();
+                    break;
 
                 case 0:
                     konec = true;
@@ -79,6 +83,7 @@ public class Main {
         System.out.println("5 - Odebrat zaměstnance");
         System.out.println("6 - Vyhledat zaměstnance podle ID");
         System.out.println("7 - Spustit dovednost zaměstnance");
+        System.out.println("8 - Abecední výpis podle skupin");
         System.out.println("0 - Konec");
         System.out.print("Volba: ");
     }
@@ -327,5 +332,38 @@ public class Main {
 
         // polymorfismus - zavolá správnou implementaci
         z.provedDovednost();
+    }
+    
+    static void abecedniVypis() {
+
+        List<Zamestnanec> analytici = new ArrayList<>();
+        List<Zamestnanec> bezpecaci = new ArrayList<>();
+
+        // rozdělení do skupin
+        for (Zamestnanec z : zamestnanci) {
+
+            if (z instanceof DatovyAnalytik) {
+                analytici.add(z);
+            }
+            else if (z instanceof BezpecnostniSpecialista) {
+                bezpecaci.add(z);
+            }
+        }
+
+        // seřazení podle příjmení
+        analytici.sort((a, b) -> a.getPrijmeni().compareTo(b.getPrijmeni()));
+        bezpecaci.sort((a, b) -> a.getPrijmeni().compareTo(b.getPrijmeni()));
+
+        // výpis analytiků
+        System.out.println("\n--- Datoví analytici ---");
+        for (Zamestnanec z : analytici) {
+            System.out.println(z);
+        }
+
+        // výpis bezpečáků
+        System.out.println("\n--- Bezpečnostní specialisté ---");
+        for (Zamestnanec z : bezpecaci) {
+            System.out.println(z);
+        }
     }
 }
