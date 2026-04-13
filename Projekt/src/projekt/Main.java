@@ -48,6 +48,14 @@ public class Main {
                 case 5:
                     odeberZamestnance();
                     break;
+                    
+                case 6:
+                    vyhledejZamestnance();
+                    break;
+                    
+                case 7:
+                    spustDovednost();
+                    break;
 
                 case 0:
                     konec = true;
@@ -69,6 +77,8 @@ public class Main {
         System.out.println("3 - Přidat spolupráci");
         System.out.println("4 - Vypsat spolupracovníky");
         System.out.println("5 - Odebrat zaměstnance");
+        System.out.println("6 - Vyhledat zaměstnance podle ID");
+        System.out.println("7 - Spustit dovednost zaměstnance");
         System.out.println("0 - Konec");
         System.out.print("Volba: ");
     }
@@ -238,5 +248,84 @@ public class Main {
         zamestnanci.remove(z);
 
         System.out.println("Zaměstnanec odebrán.");
+    }
+    
+    static void vyhledejZamestnance() {
+
+        System.out.print("Zadej ID zaměstnance: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        Zamestnanec z = najdiZamestnance(id);
+
+        if (z == null) {
+            System.out.println("Zaměstnanec nenalezen");
+            return;
+        }
+
+        // základní info
+        System.out.println("Zaměstnanec:");
+        System.out.println(z);
+
+        int pocet = z.getSpolupracovnici().size();
+
+        System.out.println("Počet spolupracovníků: " + pocet);
+
+        if (pocet == 0) {
+            return;
+        }
+
+        int spatna = 0;
+        int prumerna = 0;
+        int dobra = 0;
+
+        // počítání úrovní
+        for (Spoluprace s : z.getSpolupracovnici()) {
+
+            switch (s.getUroven()) {
+
+                case SPATNA:
+                    spatna++;
+                    break;
+
+                case PRUMERNA:
+                    prumerna++;
+                    break;
+
+                case DOBRA:
+                    dobra++;
+                    break;
+            }
+        }
+
+        // Kvalita spolupráce
+        System.out.print("Celková kvalita spolupráce: ");
+
+        if (dobra >= prumerna && dobra >= spatna) {
+            System.out.println("DOBRÁ");
+        }
+        else if (prumerna >= dobra && prumerna >= spatna) {
+            System.out.println("PRŮMĚRNÁ");
+        }
+        else {
+            System.out.println("ŠPATNÁ");
+        }
+    }
+    
+    static void spustDovednost() {
+
+        System.out.print("Zadej ID zaměstnance: ");
+        int id = sc.nextInt();
+        sc.nextLine();
+
+        Zamestnanec z = najdiZamestnance(id);
+
+        if (z == null) {
+            System.out.println("Zaměstnanec nenalezen");
+            return;
+        }
+
+        // polymorfismus - zavolá správnou implementaci
+        z.provedDovednost();
     }
 }
