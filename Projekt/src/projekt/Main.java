@@ -1,8 +1,10 @@
 package projekt;
 
 import java.util.ArrayList;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Scanner;
+import java.io.File;
 
 public class Main {
 
@@ -68,6 +70,14 @@ public class Main {
                 case 10:
                     pocetVeSkupinach();
                     break;
+               
+                case 11:
+                    ulozDoSouboru();
+                    break;
+                    
+                case 12:
+                    nactiZeSouboru();
+                    break;
 
                 case 0:
                     konec = true;
@@ -94,6 +104,8 @@ public class Main {
         System.out.println("8 - Abecední výpis podle skupin");
         System.out.println("9 - Statistiky");
         System.out.println("10 - Počet zaměstnanců ve skupinách");
+        System.out.println("11 - Uložit do souboru");
+        System.out.println("12 - Načíst ze souboru");
         System.out.println("0 - Konec");
         System.out.print("Volba: ");
     }
@@ -457,5 +469,84 @@ public class Main {
         System.out.println("---- Počet zaměstnanců ----");
         System.out.println("Datoví analytici: " + analytici);
         System.out.println("Bezpečnostní specialisté: " + bezpecaci);
+    }
+    
+    static void ulozDoSouboru() {
+
+        try {
+            PrintWriter writer = new PrintWriter("zamestnanci.txt");
+
+            for (Zamestnanec z : zamestnanci) {
+
+                String typ;
+
+                if (z instanceof DatovyAnalytik) {
+                    typ = "A";
+                } else {
+                    typ = "B";
+                }
+
+                writer.println(
+                        typ + ";" +
+                        z.getId() + ";" +
+                        z.getJmeno() + ";" +
+                        z.getPrijmeni() + ";" +
+                        z.getRokNarozeni()
+                );
+            }
+
+            writer.close();
+
+            System.out.println("Uloženo do souboru.");
+
+        } catch (Exception e) {
+            System.out.println("Chyba při ukládání.");
+        }
+    }
+    
+    static void nactiZeSouboru() {
+
+        try {
+
+            File file = new File("zamestnanci.txt");
+            Scanner reader = new Scanner(file);
+
+            zamestnanci.clear(); // vymaže aktuální seznam
+
+            while (reader.hasNextLine()) {
+
+                String line = reader.nextLine();
+
+                String[] data = line.split(";");
+
+                String typ = data[0];
+                int id = Integer.parseInt(data[1]);
+                String jmeno = data[2];
+                String prijmeni = data[3];
+                int rok = Integer.parseInt(data[4]);
+
+                Zamestnanec z;
+
+                if (typ.equals("A")) {
+                    z = new DatovyAnalytik(id, jmeno, prijmeni, rok);
+                } else {
+                    z = new BezpecnostniSpecialista(id, jmeno, prijmeni, rok);
+                }
+
+                zamestnanci.add(z);
+
+                // aktualizace nextId
+                if (id >= nextId) {
+                    nextId = id + 1;
+                }
+            }
+
+            reader.close();
+
+            System.out.println("Načteno ze souboru.");
+
+        } catch (Exception e) {
+            System.out.println("Chyba při načítání.");
+        }
     }
 }
