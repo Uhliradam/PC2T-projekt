@@ -60,6 +60,14 @@ public class Main {
                 case 8:
                     abecedniVypis();
                     break;
+                
+                case 9:
+                    statistiky();
+                    break;
+               
+                case 10:
+                    pocetVeSkupinach();
+                    break;
 
                 case 0:
                     konec = true;
@@ -84,6 +92,8 @@ public class Main {
         System.out.println("6 - Vyhledat zaměstnance podle ID");
         System.out.println("7 - Spustit dovednost zaměstnance");
         System.out.println("8 - Abecední výpis podle skupin");
+        System.out.println("9 - Statistiky");
+        System.out.println("10 - Počet zaměstnanců ve skupinách");
         System.out.println("0 - Konec");
         System.out.print("Volba: ");
     }
@@ -365,5 +375,87 @@ public class Main {
         for (Zamestnanec z : bezpecaci) {
             System.out.println(z);
         }
+    }
+    
+    static void statistiky() {
+
+        int spatna = 0;
+        int prumerna = 0;
+        int dobra = 0;
+
+        Zamestnanec nejvice = null;
+        int max = 0;
+
+        for (Zamestnanec z : zamestnanci) {
+
+            int pocet = z.getSpolupracovnici().size();
+
+            // hledání zaměstnance s nejvíce vazbami
+            if (pocet > max) {
+                max = pocet;
+                nejvice = z;
+            }
+
+            // počítání kvalit spolupráce
+            for (Spoluprace s : z.getSpolupracovnici()) {
+
+                switch (s.getUroven()) {
+
+                    case SPATNA:
+                        spatna++;
+                        break;
+
+                    case PRUMERNA:
+                        prumerna++;
+                        break;
+
+                    case DOBRA:
+                        dobra++;
+                        break;
+                }
+            }
+        }
+
+        System.out.println("---- Statistiky ----");
+
+        // převažující kvalita
+        System.out.print("Převažující kvalita: ");
+
+        if (dobra >= prumerna && dobra >= spatna) {
+            System.out.println("DOBRÁ");
+        }
+        else if (prumerna >= dobra && prumerna >= spatna) {
+            System.out.println("PRŮMĚRNÁ");
+        }
+        else {
+            System.out.println("ŠPATNÁ");
+        }
+
+        // zaměstnanec s nejvíce vazbami
+        if (nejvice != null) {
+            System.out.println("Nejvíce vazeb má:");
+            System.out.println(nejvice);
+            System.out.println("Počet vazeb: " + max);
+        }
+    }
+    
+    static void pocetVeSkupinach() {
+
+        int analytici = 0;
+        int bezpecaci = 0;
+
+        for (Zamestnanec z : zamestnanci) {
+
+            if (z instanceof DatovyAnalytik) {
+                analytici++;
+            }
+            else if (z instanceof BezpecnostniSpecialista) {
+                bezpecaci++;
+            }
+        }
+
+        System.out.println("---- Počet zaměstnanců ----");
+        System.out.println("Datoví analytici: " + analytici);
+        System.out.println("Bezpečnostní specialisté: " + bezpecaci);
     }
 }
