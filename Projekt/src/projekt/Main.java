@@ -26,8 +26,16 @@ public class Main {
 
             vypisMenu();
 
-            int volba = sc.nextInt();
-            sc.nextLine(); // vyčištění bufferu
+            int volba;
+
+            while (true) {
+                try {
+                    volba = Integer.parseInt(sc.nextLine());
+                    break;
+                } catch (Exception e) {
+                    System.out.print("Zadej číslo: ");
+                }
+            }
 
             switch (volba) {
 
@@ -117,22 +125,73 @@ public class Main {
         System.out.println("1 - Datový analytik");
         System.out.println("2 - Bezpečnostní specialista");
 
-        int typ = sc.nextInt();
-        sc.nextLine();
+        int typ;
+        while (true) {
+            try {
+                typ = Integer.parseInt(sc.nextLine());
 
-        System.out.print("Zadej jméno: ");
-        String jmeno = sc.nextLine();
+                if (typ == 1 || typ == 2) {
+                    break;
+                } else {
+                    System.out.println("Zadej 1 nebo 2:");
+                }
 
-        System.out.print("Zadej příjmení: ");
-        String prijmeni = sc.nextLine();
+            } catch (Exception e) {
+                System.out.println("Zadej číslo 1 nebo 2:");
+            }
+        }
 
-        System.out.print("Zadej rok narození: ");
-        int rok = sc.nextInt();
-        sc.nextLine();
+        // jméno
+        String jmeno;
+        while (true) {
+
+            System.out.print("Zadej jméno: ");
+            jmeno = sc.nextLine();
+
+            // kontrola že neobsahuje čísla
+            if (jmeno.matches("[a-zA-Zá-žÁ-Ž]+")) {
+                break;
+            } else {
+                System.out.println("Jméno nesmí obsahovat čísla!");
+            }
+        }
+
+        // příjmení
+        String prijmeni;
+        while (true) {
+
+            System.out.print("Zadej příjmení: ");
+            prijmeni = sc.nextLine();
+
+            if (prijmeni.matches("[a-zA-Zá-žÁ-Ž]+")) {
+                break;
+            } else {
+                System.out.println("Příjmení nesmí obsahovat čísla!");
+            }
+        }
+
+        // rok narození
+        int rok;
+        while (true) {
+
+            System.out.print("Zadej rok narození: ");
+
+            try {
+                rok = Integer.parseInt(sc.nextLine());
+
+                if (rok > 1900 && rok < 2100) {
+                    break;
+                } else {
+                    System.out.println("Neplatný rok!");
+                }
+
+            } catch (Exception e) {
+                System.out.println("Rok musí být číslo!");
+            }
+        }
 
         Zamestnanec z;
 
-        // vytvoření podle typu
         if (typ == 1) {
             z = new DatovyAnalytik(nextId++, jmeno, prijmeni, rok);
         } else {
@@ -160,11 +219,8 @@ public class Main {
     // přidání spolupráce
     static void pridejSpolupraci() {
 
-        System.out.print("Zadej ID zaměstnance: ");
-        int id1 = sc.nextInt();
-
-        System.out.print("Zadej ID kolegy: ");
-        int id2 = sc.nextInt();
+        int id1 = nactiId("Zadej ID zaměstnance: ");
+        int id2 = nactiId("Zadej ID kolegy: ");   
 
         System.out.println("Úroveň spolupráce:");
         System.out.println("1 - Špatná");
@@ -251,9 +307,7 @@ public class Main {
     
     static void odeberZamestnance() {
 
-        System.out.print("Zadej ID zaměstnance k odebrání: ");
-        int id = sc.nextInt();
-        sc.nextLine();
+    	int id = nactiId("Zadej ID zaměstnance k odebrání: ");
 
         Zamestnanec z = najdiZamestnance(id);
 
@@ -279,9 +333,7 @@ public class Main {
     
     static void vyhledejZamestnance() {
 
-        System.out.print("Zadej ID zaměstnance: ");
-        int id = sc.nextInt();
-        sc.nextLine();
+    	int id = nactiId("Zadej ID zaměstnance: ");
 
         Zamestnanec z = najdiZamestnance(id);
 
@@ -341,9 +393,7 @@ public class Main {
     
     static void spustDovednost() {
 
-        System.out.print("Zadej ID zaměstnance: ");
-        int id = sc.nextInt();
-        sc.nextLine();
+    	int id = nactiId("Zadej ID zaměstnance: ");
 
         Zamestnanec z = najdiZamestnance(id);
 
@@ -540,13 +590,33 @@ public class Main {
                     nextId = id + 1;
                 }
             }
-
             reader.close();
 
             System.out.println("Načteno ze souboru.");
 
         } catch (Exception e) {
             System.out.println("Chyba při načítání.");
+        }
+    }
+    
+    static int nactiId(String text) {
+
+        int id;
+
+        while (true) {
+            try {
+                System.out.print(text);
+                id = Integer.parseInt(sc.nextLine());
+
+                if (id >= 0) {
+                    return id;
+                } else {
+                    System.out.println("ID musí být kladné číslo!");
+                }
+
+            } catch (Exception e) {
+                System.out.println("Zadej číslo!");
+            }
         }
     }
 }
