@@ -2,9 +2,10 @@ package projekt;
 
 import java.util.ArrayList;
 import java.io.PrintWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Scanner;
-import java.io.File;
 
 public class Main {
 
@@ -32,7 +33,7 @@ public class Main {
                 try {
                     volba = Integer.parseInt(sc.nextLine());
                     break;
-                } catch (Exception e) {
+                } catch (NumberFormatException e) {
                     System.out.print("Zadej číslo: ");
                 }
             }
@@ -136,7 +137,7 @@ public class Main {
                     System.out.println("Zadej 1 nebo 2:");
                 }
 
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Zadej číslo 1 nebo 2:");
             }
         }
@@ -185,7 +186,7 @@ public class Main {
                     System.out.println("Neplatný rok!");
                 }
 
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Rok musí být číslo!");
             }
         }
@@ -227,8 +228,19 @@ public class Main {
         System.out.println("2 - Průměrná");
         System.out.println("3 - Dobrá");
 
-        int volba = sc.nextInt();
-        sc.nextLine();
+        int volba;
+        while (true) {
+            try {
+                volba = Integer.parseInt(sc.nextLine());
+                if (volba >= 1 && volba <= 3) {
+                    break;
+                } else {
+                    System.out.print("Zadej 1, 2 nebo 3: ");
+                }
+            } catch (NumberFormatException e) {
+                System.out.print("Zadej číslo (1-3): ");
+            }
+        }
 
         Zamestnanec z1 = najdiZamestnance(id1);
         Zamestnanec z2 = najdiZamestnance(id2);
@@ -271,9 +283,7 @@ public class Main {
     
     static void vypisSpolupracovniky() {
 
-        System.out.print("Zadej ID zaměstnance: ");
-        int id = sc.nextInt();
-        sc.nextLine();
+        int id = nactiId("Zadej ID zaměstnance: ");
 
         Zamestnanec z = najdiZamestnance(id);
 
@@ -523,8 +533,7 @@ public class Main {
     
     static void ulozDoSouboru() {
 
-        try {
-            PrintWriter writer = new PrintWriter("zamestnanci.txt");
+        try (PrintWriter writer = new PrintWriter("zamestnanci.txt")) {
 
             for (Zamestnanec z : zamestnanci) {
 
@@ -545,57 +554,73 @@ public class Main {
                 );
             }
 
-            writer.close();
-
             System.out.println("Uloženo do souboru.");
 
-        } catch (Exception e) {
-            System.out.println("Chyba při ukládání.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Chyba při ukládání: " + e.getMessage());
         }
     }
     
     static void nactiZeSouboru() {
 
-        try {
+        File file = new File("zamestnanci.txt");
 
-            File file = new File("zamestnanci.txt");
-            Scanner reader = new Scanner(file);
+        if (!file.exists()) {
+            System.out.println("Soubor zamestnanci.txt neexistuje.");
+            return;
+        }
+
+        try (Scanner reader = new Scanner(file)) {
 
             zamestnanci.clear(); // vymaže aktuální seznam
+            nextId = 1;
 
             while (reader.hasNextLine()) {
 
                 String line = reader.nextLine();
 
-                String[] data = line.split(";");
-
-                String typ = data[0];
-                int id = Integer.parseInt(data[1]);
-                String jmeno = data[2];
-                String prijmeni = data[3];
-                int rok = Integer.parseInt(data[4]);
-
-                Zamestnanec z;
-
-                if (typ.equals("A")) {
-                    z = new DatovyAnalytik(id, jmeno, prijmeni, rok);
-                } else {
-                    z = new BezpecnostniSpecialista(id, jmeno, prijmeni, rok);
+                if (line.isBlank()) {
+                    continue;
                 }
 
-                zamestnanci.add(z);
+                try {
+                    String[] data = line.split(";");
 
-                // aktualizace nextId
-                if (id >= nextId) {
-                    nextId = id + 1;
+                    if (data.length != 5) {
+                        System.out.println("Vynechávám vadný řádek: " + line);
+                        continue;
+                    }
+
+                    String typ = data[0];
+                    int id = Integer.parseInt(data[1]);
+                    String jmeno = data[2];
+                    String prijmeni = data[3];
+                    int rok = Integer.parseInt(data[4]);
+
+                    Zamestnanec z;
+
+                    if (typ.equals("A")) {
+                        z = new DatovyAnalytik(id, jmeno, prijmeni, rok);
+                    } else {
+                        z = new BezpecnostniSpecialista(id, jmeno, prijmeni, rok);
+                    }
+
+                    zamestnanci.add(z);
+
+                    // aktualizace nextId
+                    if (id >= nextId) {
+                        nextId = id + 1;
+                    }
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Vynechávám řádek s chybným číslem: " + line);
                 }
             }
-            reader.close();
 
             System.out.println("Načteno ze souboru.");
 
-        } catch (Exception e) {
-            System.out.println("Chyba při načítání.");
+        } catch (FileNotFoundException e) {
+            System.out.println("Chyba při načítání: " + e.getMessage());
         }
     }
     
@@ -614,7 +639,7 @@ public class Main {
                     System.out.println("ID musí být kladné číslo!");
                 }
 
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Zadej číslo!");
             }
         }
