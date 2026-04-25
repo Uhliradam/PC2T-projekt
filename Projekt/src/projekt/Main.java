@@ -20,6 +20,20 @@ public class Main {
 
     public static void main(String[] args) {
 
+        List<Zamestnanec> nactene = SqlDatabaze.nacti();
+
+        if (!nactene.isEmpty()) {
+
+            zamestnanci.addAll(nactene);
+
+            for (Zamestnanec z : zamestnanci) {
+
+                if (z.getId() >= nextId) {
+                    nextId = z.getId() + 1;
+                }
+            }
+        }
+
         boolean konec = false;
 
         // hlavní smyčka programu
@@ -96,6 +110,8 @@ public class Main {
                     System.out.println("Neplatná volba");
             }
         }
+
+        SqlDatabaze.uloz(zamestnanci);
 
         System.out.println("Program ukončen.");
     }
