@@ -477,6 +477,8 @@ public class Main {
         Zamestnanec nejvice = null;
         int max = 0;
 
+        List<String> zapoctene = new ArrayList<>();
+        
         for (Zamestnanec z : zamestnanci) {
 
             int pocet = z.getSpolupracovnici().size();
@@ -486,7 +488,17 @@ public class Main {
                 nejvice = z;
             }
 
-            for (Spoluprace s : z.getSpolupracovnici()) {
+         for (Spoluprace s : z.getSpolupracovnici()) {
+             int id1 = z.getId();
+             int id2 = s.getKolega().getId();
+
+             String klic = Math.min(id1, id2) + "-" + Math.max(id1, id2);
+
+             if (zapoctene.contains(klic)) {
+                  continue;
+             }
+
+                 zapoctene.add(klic);
 
                 switch (s.getUroven()) {
 
