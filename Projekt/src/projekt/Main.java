@@ -9,13 +9,10 @@ import java.util.Scanner;
 
 public class Main {
 
-    // dynamický seznam zaměstnanců
     static List<Zamestnanec> zamestnanci = new ArrayList<>();
 
-    // automatické generování ID
     static int nextId = 1;
 
-    // scanner pro vstup z klávesnice
     static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -36,7 +33,6 @@ public class Main {
 
         boolean konec = false;
 
-        // hlavní smyčka programu
         while (!konec) {
 
             vypisMenu();
@@ -116,7 +112,6 @@ public class Main {
         System.out.println("Program ukončen.");
     }
 
-    // výpis menu
     static void vypisMenu() {
         System.out.println("\n--- MENU ---");
         System.out.println("1 - Přidat zaměstnance");
@@ -135,9 +130,8 @@ public class Main {
         System.out.print("Volba: ");
     }
 
-    // přidání zaměstnance
     static void pridejZamestnance() {
-
+    	System.out.println("\n--- Přidání zaměstnance ---");
         System.out.println("Vyber skupinu:");
         System.out.println("1 - Datový analytik");
         System.out.println("2 - Bezpečnostní specialista");
@@ -158,14 +152,12 @@ public class Main {
             }
         }
 
-        // jméno
         String jmeno;
         while (true) {
 
             System.out.print("Zadej jméno: ");
             jmeno = sc.nextLine();
 
-            // kontrola že neobsahuje čísla
             if (jmeno.matches("[a-zA-Zá-žÁ-Ž]+")) {
                 break;
             } else {
@@ -173,7 +165,6 @@ public class Main {
             }
         }
 
-        // příjmení
         String prijmeni;
         while (true) {
 
@@ -187,7 +178,6 @@ public class Main {
             }
         }
 
-        // rok narození
         int rok;
         while (true) {
 
@@ -220,9 +210,8 @@ public class Main {
         System.out.println("Zaměstnanec přidán.");
     }
 
-    // výpis zaměstnanců
     static void vypisZamestnance() {
-
+    	System.out.println("\n--- Výpis zaměstnanců ---");
         if (zamestnanci.isEmpty()) {
             System.out.println("Žádní zaměstnanci.");
             return;
@@ -233,12 +222,17 @@ public class Main {
         }
     }
 
-    // přidání spolupráce
     static void pridejSpolupraci() {
-
+    	System.out.println("\n---- Přidání spolupráce ----");
+    	
         int id1 = nactiId("Zadej ID zaměstnance: ");
         int id2 = nactiId("Zadej ID kolegy: ");   
 
+        if (id1 == id2) {
+            System.out.println("Nelze přidat spolupráci se sebou samým.");
+            return;
+        }
+        
         System.out.println("Úroveň spolupráce:");
         System.out.println("1 - Špatná");
         System.out.println("2 - Průměrná");
@@ -266,6 +260,13 @@ public class Main {
             return;
         }
 
+        for (Spoluprace s : z1.getSpolupracovnici()) {
+            if (s.getKolega().getId() == id2) {
+                System.out.println("Spolupráce již existuje.");
+                return;
+            }
+        }
+        
         UrovenSpoluprace uroven;
 
         switch (volba) {
@@ -279,13 +280,12 @@ public class Main {
                 uroven = UrovenSpoluprace.DOBRA;
         }
 
-        // přidání spolupráce
         z1.pridejSpolupraci(z2, uroven);
+        z2.pridejSpolupraci(z1, uroven);
 
         System.out.println("Spolupráce přidána");
     }
 
-    // hledání zaměstnance podle ID
     static Zamestnanec najdiZamestnance(int id) {
 
         for (Zamestnanec z : zamestnanci) {
@@ -298,18 +298,17 @@ public class Main {
     }
     
     static void vypisSpolupracovniky() {
-
-        int id = nactiId("Zadej ID zaměstnance: ");
+    	System.out.println("\n--- Výpis spolupracovníků ---");
+        
+    	int id = nactiId("Zadej ID zaměstnance: ");
 
         Zamestnanec z = najdiZamestnance(id);
 
-        // kontrola existence
         if (z == null) {
             System.out.println("Zaměstnanec nenalezen");
             return;
         }
 
-        // kontrola prázdného seznamu
         if (z.getSpolupracovnici().isEmpty()) {
             System.out.println("Nemá žádné spolupracovníky");
             return;
@@ -332,7 +331,8 @@ public class Main {
     }
     
     static void odeberZamestnance() {
-
+    	System.out.println("\n---- Odebrání zaměstnance ----");
+    	
     	int id = nactiId("Zadej ID zaměstnance k odebrání: ");
 
         Zamestnanec z = najdiZamestnance(id);
@@ -342,23 +342,32 @@ public class Main {
             return;
         }
 
-        // odstranění vazeb u ostatních zaměstnanců
+        System.out.println("Nalezen:");
+        System.out.println(z);
+
+        System.out.print("Opravdu smazat? (ano/ne): ");
+        String odp = sc.nextLine();
+
+        if (!odp.equalsIgnoreCase("ano")) {
+            System.out.println("Mazání zrušeno.");
+            return;
+        }
+        
         for (Zamestnanec ostatni : zamestnanci) {
 
-            // removeIf = smaže podle podmínky
             ostatni.getSpolupracovnici().removeIf(
                     s -> s.getKolega().getId() == id
             );
         }
 
-        // odstranění ze seznamu
         zamestnanci.remove(z);
 
         System.out.println("Zaměstnanec odebrán.");
     }
     
     static void vyhledejZamestnance() {
-
+    	System.out.println("\n---- Vyhledání zaměstnance podle ID ----");
+    	
     	int id = nactiId("Zadej ID zaměstnance: ");
 
         Zamestnanec z = najdiZamestnance(id);
@@ -368,7 +377,6 @@ public class Main {
             return;
         }
 
-        // základní info
         System.out.println("Zaměstnanec:");
         System.out.println(z);
 
@@ -384,7 +392,6 @@ public class Main {
         int prumerna = 0;
         int dobra = 0;
 
-        // počítání úrovní
         for (Spoluprace s : z.getSpolupracovnici()) {
 
             switch (s.getUroven()) {
@@ -403,7 +410,6 @@ public class Main {
             }
         }
 
-        // Kvalita spolupráce
         System.out.print("Celková kvalita spolupráce: ");
 
         if (dobra >= prumerna && dobra >= spatna) {
@@ -418,7 +424,8 @@ public class Main {
     }
     
     static void spustDovednost() {
-
+    	System.out.println("\n---- Dovednost zaměstnance ----");
+    	
     	int id = nactiId("Zadej ID zaměstnance: ");
 
         Zamestnanec z = najdiZamestnance(id);
@@ -428,16 +435,15 @@ public class Main {
             return;
         }
 
-        // polymorfismus - zavolá správnou implementaci
         z.provedDovednost();
     }
     
     static void abecedniVypis() {
-
+    	System.out.println("\n---- Abecední výpis zaměstnanců ----");
+    	
         List<Zamestnanec> analytici = new ArrayList<>();
         List<Zamestnanec> bezpecaci = new ArrayList<>();
 
-        // rozdělení do skupin
         for (Zamestnanec z : zamestnanci) {
 
             if (z instanceof DatovyAnalytik) {
@@ -448,17 +454,14 @@ public class Main {
             }
         }
 
-        // seřazení podle příjmení
         analytici.sort((a, b) -> a.getPrijmeni().compareTo(b.getPrijmeni()));
         bezpecaci.sort((a, b) -> a.getPrijmeni().compareTo(b.getPrijmeni()));
 
-        // výpis analytiků
         System.out.println("\n--- Datoví analytici ---");
         for (Zamestnanec z : analytici) {
             System.out.println(z);
         }
 
-        // výpis bezpečáků
         System.out.println("\n--- Bezpečnostní specialisté ---");
         for (Zamestnanec z : bezpecaci) {
             System.out.println(z);
@@ -478,13 +481,11 @@ public class Main {
 
             int pocet = z.getSpolupracovnici().size();
 
-            // hledání zaměstnance s nejvíce vazbami
             if (pocet > max) {
                 max = pocet;
                 nejvice = z;
             }
 
-            // počítání kvalit spolupráce
             for (Spoluprace s : z.getSpolupracovnici()) {
 
                 switch (s.getUroven()) {
@@ -504,9 +505,8 @@ public class Main {
             }
         }
 
-        System.out.println("---- Statistiky ----");
+        System.out.println("\n---- Statistiky ----");
 
-        // převažující kvalita
         System.out.print("Převažující kvalita: ");
 
         if (dobra >= prumerna && dobra >= spatna) {
@@ -519,7 +519,6 @@ public class Main {
             System.out.println("ŠPATNÁ");
         }
 
-        // zaměstnanec s nejvíce vazbami
         if (nejvice != null) {
             System.out.println("Nejvíce vazeb má:");
             System.out.println(nejvice);
@@ -542,7 +541,7 @@ public class Main {
             }
         }
 
-        System.out.println("---- Počet zaměstnanců ----");
+        System.out.println("\n---- Počet zaměstnanců ve skupinách ----");
         System.out.println("Datoví analytici: " + analytici);
         System.out.println("Bezpečnostní specialisté: " + bezpecaci);
     }
@@ -588,7 +587,7 @@ public class Main {
 
         try (Scanner reader = new Scanner(file)) {
 
-            zamestnanci.clear(); // vymaže aktuální seznam
+            zamestnanci.clear(); 
             nextId = 1;
 
             while (reader.hasNextLine()) {
@@ -623,7 +622,6 @@ public class Main {
 
                     zamestnanci.add(z);
 
-                    // aktualizace nextId
                     if (id >= nextId) {
                         nextId = id + 1;
                     }

@@ -159,7 +159,6 @@ public class SqlDatabaze {
             }
 
         } catch (SQLException e) {
-            // SQL je jen záloha, program funguje i bez ní
             System.out.println("Chyba při načítání z SQL: " + e.getMessage());
         }
 

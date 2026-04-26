@@ -10,7 +10,6 @@ public abstract class Zamestnanec {
     private String prijmeni;
     private int rokNarozeni;
 
-    // seznam spolupracovníků
     private List<Spoluprace> spolupracovnici = new ArrayList<>();
 
     public Zamestnanec(int id, String jmeno, String prijmeni, int rokNarozeni) {
@@ -20,7 +19,6 @@ public abstract class Zamestnanec {
         this.rokNarozeni = rokNarozeni;
     }
 
-    // přidání spolupráce
     public void pridejSpolupraci(Zamestnanec kolega, UrovenSpoluprace uroven) {
         spolupracovnici.add(new Spoluprace(kolega, uroven));
     }
